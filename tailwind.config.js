@@ -8,6 +8,7 @@ module.exports = {
       "primary": "#EDF4EC",
       "secondary": "#EB7462",
       "buttonBg": "#585E58",
+      "buttonBgSec": "#B2BDB2",
       "white": "#FFFFFF",
     }
   },
