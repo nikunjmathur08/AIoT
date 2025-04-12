@@ -1,8 +1,11 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function SignupScreen() {
+  const router = useRouter();
+
   return (
     <View className="flex-1 bg-primary items-center pt-24 px-6">
       {/* Avatar */}
@@ -48,7 +51,10 @@ export default function SignupScreen() {
       </View>
 
       {/* Email Signup */}
-      <TouchableOpacity className="bg-buttonBgSec w-full py-4 rounded-2xl mb-4">
+      <TouchableOpacity 
+        className="bg-buttonBgSec w-full py-4 rounded-2xl mb-4" 
+        onPress={() => router.push("/preference")}
+      >
         <Text className="text-xl text-center text-black font-semibold">
           Sign up with email
         </Text>
