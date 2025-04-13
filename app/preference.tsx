@@ -40,7 +40,7 @@ export default function Preference() {
                   source={require("../assets/uk.png")}
                   className="w-6 h-6 mr-4"
                 />
-                <Text className="text-lg">{language}</Text>
+                <Text className="text-xl">{language}</Text>
               </View>
               <Image
                 source={require("../assets/down.png")}
@@ -104,7 +104,7 @@ export default function Preference() {
       <View className="absolute bottom-12 w-full items-center z-30">
         <TouchableOpacity
           className="bg-buttonBg px-40 py-4 rounded-2xl mb-4"
-          onPress={() => router.push("/splash")}
+          onPress={() => router.push({pathname: "/splash", params: { selectedLanguage }})}
         >
           <Text className="text-lg text-white font-semibold">Continue</Text>
         </TouchableOpacity>

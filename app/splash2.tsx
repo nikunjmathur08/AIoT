@@ -9,6 +9,14 @@ export default function SplashScreen2() {
   const { goal } = useLocalSearchParams();
   const goalString = goal as string;
 
+  useEffect(() => {
+      const timer = setTimeout(() => {
+        router.replace("/program");
+      }, 1500);
+  
+      return () => clearTimeout(timer);
+    }, []);
+
   const gesturesPerMonth = (() => {
     switch (goalString) {
       case "5":

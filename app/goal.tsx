@@ -88,7 +88,7 @@ export default function Goal() {
       <View className="absolute bottom-12 w-full items-center z-30">
         <TouchableOpacity
           className="bg-buttonBg px-40 py-4 rounded-2xl mb-4"
-          onPress={() => router.push({ pathname: "/splash2", params: { goal }})}
+          onPress={() => router.push({pathname: "/splash2", params: { goal }})}
         >
           <Text className="text-lg text-white font-semibold">Continue</Text>
         </TouchableOpacity>
