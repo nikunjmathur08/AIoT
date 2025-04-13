@@ -10,6 +10,8 @@ module.exports = {
       "buttonBg": "#585E58",
       "buttonBgSec": "#B2BDB2",
       "white": "#FFFFFF",
+      "grey": "#D9D9D9",
+      "grey-dark": "#888888",
     }
   },
   plugins: [],
