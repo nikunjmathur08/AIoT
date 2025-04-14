@@ -4,6 +4,8 @@ import { Menu } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import UK from "../assets/uk.svg"
+
 export default function Preference() {
   const [language, setLanguage] = useState("English");
   const [selectedLanguage, setSelectedLanguage] = useState("ASL");
@@ -36,11 +38,8 @@ export default function Preference() {
               onPress={() => setMenuVisible(true)}
             >
               <View className="flex-row items-center">
-                <Image
-                  source={require("../assets/uk.png")}
-                  className="w-6 h-6 mr-4"
-                />
-                <Text className="text-xl">{language}</Text>
+                <UK width={20} height={20}/>
+                <Text className="text-xl ml-2">{language}</Text>
               </View>
               <Image
                 source={require("../assets/down.png")}
@@ -70,12 +69,9 @@ export default function Preference() {
           }`}
           onPress={() => setSelectedLanguage("ASL")}
         >
-          <Image
-            source={require("../assets/uk.png")}
-            className="w-6 h-6 mr-2"
-          />
+          <UK width={20} height={20}/>
           <Text
-            className={`text-lg font-medium ${
+            className={`text-lg ml-2 font-medium ${
               selectedLanguage === "ASL" ? "text-white" : "text-black"
             }`}
           >

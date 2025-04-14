@@ -3,6 +3,15 @@ import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import Level0 from "../assets/level0.svg"
+import Level0Inv from "../assets/level0-inverted.svg"
+import Level1 from "../assets/level1.svg"
+import Level1Inv from "../assets/level1-inverted.svg"
+import Level2 from "../assets/level2.svg"
+import Level2Inv from "../assets/level2-inverted.svg"
+import Level3 from "../assets/level3.svg"
+import Level3Inv from "../assets/level3-inverted.svg"
+
 export default function ASLLevel() {
   const [level, setLevel] = useState("0");
   const router = useRouter();
@@ -30,10 +39,11 @@ export default function ASLLevel() {
           }`}
           onPress={() => setLevel("0")}
         >
-          <Image
-            source={require("../assets/level0.png")}
-            className="w-4 h-4 mr-4"
-          />
+          {level === '0' ? (
+            <Level0Inv width={20} height={20} style={{ marginRight: 16 }}/>
+          ) : (
+            <Level0 width={20} height={20} style={{ marginRight: 16 }}/>
+          )}
           <Text
             className={`text-lg font-medium ${
               level === "0" ? "text-white" : "text-black"
@@ -49,10 +59,11 @@ export default function ASLLevel() {
           }`}
           onPress={() => setLevel("1")}
         >
-          <Image
-            source={require("../assets/level1.png")}
-            className="w-4 h-4 mr-4"
-          />
+          {level === '1' ? (
+            <Level1Inv width={20} height={20} style={{ marginRight: 16 }}/>
+          ) : (
+            <Level1 width={20} height={20} style={{ marginRight: 16 }}/>
+          )}
           <Text
             className={`text-lg font-medium ${
               level === "1" ? "text-white" : "text-black"
@@ -68,10 +79,11 @@ export default function ASLLevel() {
           }`}
           onPress={() => setLevel("2")}
         >
-          <Image
-            source={require("../assets/level2.png")}
-            className="w-4 h-4 mr-4"
-          />
+          {level === '2' ? (
+            <Level2Inv width={20} height={20} style={{ marginRight: 16 }}/>
+          ) : (
+            <Level2 width={20} height={20} style={{ marginRight: 16 }}/>
+          )}
           <Text
             className={`text-lg font-medium ${
               level === "2" ? "text-white" : "text-black"
@@ -87,10 +99,11 @@ export default function ASLLevel() {
           }`}
           onPress={() => setLevel("3")}
         >
-          <Image
-            source={require("../assets/level3.png")}
-            className="w-4 h-4 mr-4"
-          />
+          {level === '3' ? (
+            <Level3Inv width={20} height={20} style={{ marginRight: 16 }}/>
+          ) : (
+            <Level3 width={20} height={20} style={{ marginRight: 16 }}/>
+          )}
           <Text
             className={`text-lg font-medium ${
               level === "3" ? "text-white" : "text-black"

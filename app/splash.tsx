@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 
+import Sparkly from "../assets/Sparkly.svg"
+
 export default function SplashScreen() {
   const router = useRouter();
   const { selectedLanguage } = useLocalSearchParams();
@@ -19,7 +21,7 @@ export default function SplashScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
-      <View className="flex-1 items-center justify-between">
+      <View className="flex-1 items-center justify-between -mb-16">
         {/* Text block */}
         <View className="mt-32 items-center">
           <Text className="text-5xl font-bold text-black mb-2">WOW!</Text>
@@ -29,11 +31,7 @@ export default function SplashScreen() {
         </View>
 
         {/* Cute character image */}
-        <Image
-          source={require("../assets/Sparkly.png")}
-          className="absolute bottom-0 w-full h-[600px] z-10 -mb-12"
-          resizeMode="contain"
-        />
+        <Sparkly width={600} height={600}/>
       </View>
     </SafeAreaView>
   );

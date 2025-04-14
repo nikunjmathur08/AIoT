@@ -71,13 +71,13 @@ export default function Goal() {
         {/* I can fully express myself */}
         <TouchableOpacity
           className={`rounded-2xl px-4 py-4 mb-4 flex-row items-center ${
-            goal === "16" ? "bg-secondary" : "bg-white"
+            goal === "15+" ? "bg-secondary" : "bg-white"
           }`}
-          onPress={() => setGoal("16")}
+          onPress={() => setGoal("15+")}
         >
           <Text
             className={`text-lg font-medium ${
-              goal === "16" ? "text-white" : "text-black"
+              goal === "15+" ? "text-white" : "text-black"
             }`}
           >
             15+ mins daily

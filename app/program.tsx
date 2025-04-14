@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import Cutie from "../assets/Cutie2.svg"
+
 export default function ProgramReady() {
   const router = useRouter();
 
@@ -11,9 +13,9 @@ export default function ProgramReady() {
     try {
       await AsyncStorage.setItem("onboardingCompleted", "true");
       if (playGame) {
-        router.push("/(tabs)/profile");
+        router.replace("/(tabs)/profile");
       } else {
-        router.push("/(tabs)/profile");
+        router.replace("/(tabs)/profile");
       }
     } catch (e) {
       console.error("Error setting onboarding flag:", e);
@@ -22,11 +24,7 @@ export default function ProgramReady() {
 
   return (
     <SafeAreaView className="flex-1 bg-primary justify-between items-center pt-32 pb-12">
-      <Image
-        source={require("../assets/Cutie2.png")}
-        className="w-52 h-52 mt-40"
-        resizeMode="contain"
-      />
+      <Cutie width={200} height={200}/>
 
       <Text className="text-xl font-bold text-black text-center -mt-56">
         Your program is ready

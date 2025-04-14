@@ -3,6 +3,8 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import Cutie from "../../assets/Cutie.svg"
+
 export default function OnboardingScreen() {
   const router = useRouter();
 
@@ -30,11 +32,7 @@ export default function OnboardingScreen() {
           Already using Signie? <Text className="font-bold">Log in</Text>
         </Text>
       </View>
-      <Image
-        source={require("../../assets/Cutie.png")}
-        className="absolute bottom-0 w-full h-[600px] z-10 -mb-4"
-        resizeMode="contain"
-      />
+      <Cutie width={600} height={600}/>
     </View>
   );
 }

@@ -4,6 +4,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import KuchuPuchu from "../assets/KuchuPuchu.svg"
+
 export default function SignupScreen() {
   const router = useRouter();
 
@@ -11,11 +13,7 @@ export default function SignupScreen() {
     <SafeAreaView className="flex-1 bg-primary">
       <View className="flex-1 bg-primary items-center pt-24 px-6">
         {/* Avatar */}
-        <Image
-          source={require("../assets/KuchuPuchu.png")}
-          className="w-40 h-40 mb-6"
-          resizeMode="contain"
-        />
+        <KuchuPuchu width={150} height={150}/>
 
         {/* Welcome Message */}
         <Text className="text-xl font-semibold text-center text-black my-8">
