@@ -2,59 +2,50 @@ import { View, Text, Image, ScrollView, Dimensions } from "react-native";
 import { Calendar, Dumbbell, Home, LineChart, User } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import UK from "../../assets/uk.svg";
+import Fire from "../../assets/fire.svg";
+import Gem from "../../assets/gem.svg";
+import HomeCutie from "../../assets/homeCutie.svg";
 import Path from "../../assets/path.svg";
+import Completed from "../../assets/completed.svg";
+import Incomplete from "../../assets/incomplete.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const levelSize = 60;
 const spacing = 50;
 
 const levels = [
-  { x: 20, y: 30, done: true },
-  { x: 180, y: 120, done: false },
-  { x: 340, y: 255, done: false },
-  { x: 30, y: 550, done: false },
-  { x: 180, y: 410, done: false },
-  { x: 175, y: 650, done: false },
+  { x: 20, y: 30, done: true, level: 1 },
+  { x: 180, y: 120, done: false, level:2 },
+  { x: 340, y: 255, done: false, level: 3 },
+  { x: 180, y: 410, done: false, level: 4 },
+  { x: 30, y: 550, done: false, level: 5 },
+  { x: 175, y: 650, done: false, level: 6 },
 ];
 
 export default function HomeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-primary">
-      <View className="flex-1 bg-primary">
+      <View className="flex-1">
         {/* Header */}
-        <View className="flex-row bg-white items-center rounded-xl my-4 justify-between py-4 mx-4 px-4">
-          <Image
-            source={{ uri: "https://flagcdn.com/w80/gb.png" }}
-            className="w-6 h-6 rounded-full"
-          />
+        <View className="flex-row bg-white items-center rounded-xl my-4 justify-between py-4 mx-4 px-4 z-10">
+          <UK width={30} height={30}/>
           <View className="flex-row">
-            <Image
-              source={require("../../assets/fire.png")}
-              className="w-6 h-6 mt-[2px]"
-              resizeMode="cover"
-            />
-            <Text className="font-5xl font-semibold ml-3 pt-[3px]">1</Text>
+            <Fire width={40} height={40}/>
+            <Text className="text-xl font-semibold ml-3 pt-2">1</Text>
           </View>
           <View className="flex-row">
-            <Image
-              source={require("../../assets/homeCutie.png")}
-              className="w-6 h-6 mt-[2px]"
-              resizeMode="cover"
-            />
-            <Text className="font-5xl font-semibold ml-3 pt-[3px]">5</Text>
+            <HomeCutie width={40} height={40}/>
+            <Text className="text-xl font-semibold ml-3 pt-2">5</Text>
           </View>
           <View className="flex-row">
-            <Image
-              source={require("../../assets/gem.png")}
-              className="w-6 h-6 mt-[2px]"
-              resizeMode="cover"
-            />
-            <Text className="font-5xl font-semibold ml-3 pt-[3px]">20</Text>
+            <Gem width={40} height={40}/>
+            <Text className="text-xl font-semibold ml-3 pt-2">20</Text>
           </View>
         </View>
 
         {/* Unit Banner */}
-        <View className="bg-secondary rounded-xl px-4 py-4 flex-row justify-between items-center mx-4 mb-4">
+        <View className="bg-secondary rounded-xl px-4 py-4 flex-row justify-between items-center mx-4 mb-4 z-10">
           <View>
             <Text className="text-white font-semibold text-xl">Unit 1</Text>
             <Text className="text-white text-md">Alphabets!</Text>
@@ -67,7 +58,7 @@ export default function HomeScreen() {
           contentContainerStyle={{ height: 900 }}
           showsVerticalScrollIndicator={false}
         >
-          <View className="relative mt-10">
+          <View className="relative mt-10 z-0">
             {/* Curved line background */}
             <View className="-ml-24 mt-24">
               <Path width={600} height={600} />
@@ -89,23 +80,15 @@ export default function HomeScreen() {
               >
                 <Text className="text-xl">
                   {level.done ? (
-                    <Image source={require("../../assets/completed.png")} />
+                    <Completed width={60} height={60}/>
                   ) : (
-                    <Image source={require("../../assets/incomplete.png")} />
+                    <Incomplete width={60} height={60}/>
                   )}
                 </Text>
               </View>
             ))}
           </View>
         </ScrollView>
-
-        {/* Bottom Nav */}
-        <View className="absolute bottom-6 self-center bg-[#DCE2D7] flex-row justify-around items-center px-6 py-3 rounded-2xl w-[90%] shadow">
-          <TabIcon icon={<Home />} />
-          <TabIcon icon={<LineChart />} />
-          <TabIcon icon={<Dumbbell />} />
-          <TabIcon icon={<User />} />
-        </View>
       </View>
     </SafeAreaView>
   );

@@ -31,6 +31,7 @@ export default function RootLayout() {
             <Stack.Screen name="preference" />
             <Stack.Screen name="splash" />
             <Stack.Screen name="level" />
+            <Stack.Screen name="camera" />
           </Stack>
         </PaperProvider>
     </SafeAreaProvider>

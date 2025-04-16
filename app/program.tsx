@@ -13,9 +13,9 @@ export default function ProgramReady() {
     try {
       await AsyncStorage.setItem("onboardingCompleted", "true");
       if (playGame) {
-        router.replace("/(tabs)/profile");
+        router.replace("/(tabs)/home");
       } else {
-        router.replace("/(tabs)/profile");
+        router.replace("/(tabs)/home");
       }
     } catch (e) {
       console.error("Error setting onboarding flag:", e);
