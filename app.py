@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import csv
 import copy
 import argparse
@@ -13,7 +11,6 @@ import mediapipe as mp
 
 from utils import CvFpsCalc
 from model import KeyPointClassifier
-from model import PointHistoryClassifier
 
 
 def get_args():
@@ -54,6 +51,9 @@ def main():
 
     # Camera preparation ###############################################################
     cap = cv.VideoCapture(cap_device)
+    if not cap.isOpened():
+        print("Error: Could not open camera.")
+        exit()
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
@@ -90,7 +90,6 @@ def main():
 
     # Coordinate history #################################################################
     history_length = 16
-    point_history = deque(maxlen=history_length)
 
     # Finger gesture history ################################################
     finger_gesture_history = deque(maxlen=history_length)
@@ -106,6 +105,7 @@ def main():
         if key == 27:  # ESC
             break
         number, mode = select_mode(key, mode)
+        
 
         # Camera capture #####################################################
         ret, image = cap.read()
@@ -141,7 +141,7 @@ def main():
 
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-                if hand_sign_id == 2:  # Point gesture
+                if hand_sign_id == "Not applicable":  # Point gesture
                     point_history.append(landmark_list[8])
                 else:
                     point_history.append([0, 0])
@@ -185,11 +185,13 @@ def select_mode(key, mode):
     number = -1
     if 48 <= key <= 57:  # 0 ~ 9
         number = key - 48
-    if key == 110:  # n
+    elif 97 <= key <= 118:
+        number = key - 87 
+    if key == 119:  # w
         mode = 0
-    if key == 107:  # k
+    if key == 120:  # x
         mode = 1
-    if key == 104:  # h
+    if key == 121:  # y
         mode = 2
     return number, mode
 
@@ -281,16 +283,11 @@ def pre_process_point_history(image, point_history):
 def logging_csv(number, mode, landmark_list, point_history_list):
     if mode == 0:
         pass
-    if mode == 1 and (0 <= number <= 9):
-        csv_path = 'model/keypoint_classifier/keypoint.csv'
+    if mode == 1 and (0 <= number <= 31):
+        csv_path = 'model/keypoint_classifier/Alphabet_keys.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
-    if mode == 2 and (0 <= number <= 9):
-        csv_path = 'model/point_history_classifier/point_history.csv'
-        with open(csv_path, 'a', newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([number, *point_history_list])
     return
 
 
@@ -527,12 +524,12 @@ def draw_info(image, fps, mode, number):
     cv.putText(image, "FPS:" + str(fps), (10, 30), cv.FONT_HERSHEY_SIMPLEX,
                1.0, (255, 255, 255), 2, cv.LINE_AA)
 
-    mode_string = ['Logging Key Point', 'Logging Point History']
+    mode_string = ['Logging Key Point']
     if 1 <= mode <= 2:
         cv.putText(image, "MODE:" + mode_string[mode - 1], (10, 90),
                    cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
                    cv.LINE_AA)
-        if 0 <= number <= 9:
+        if 0 <= number <= 31:
             cv.putText(image, "NUM:" + str(number), (10, 110),
                        cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
                        cv.LINE_AA)
