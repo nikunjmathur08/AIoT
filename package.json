@@ -17,6 +17,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@mediapipe/hands": "^0.4.1675469240",
+    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
@@ -25,6 +26,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-react-native": "^1.0.0",
     "expo": "~52.0.39",
+    "expo-asset": "^11.0.5",
     "expo-blur": "~14.0.3",
     "expo-camera": "~16.0.18",
     "expo-constants": "~17.0.8",
