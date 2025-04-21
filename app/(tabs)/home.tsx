@@ -1,6 +1,7 @@
-import { View, Text, Image, ScrollView, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import { Calendar, Dumbbell, Home, LineChart, User } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 import UK from "../../assets/uk.svg";
 import Fire from "../../assets/fire.svg";
@@ -24,6 +25,12 @@ const levels = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  const handleLevelPress = (level: number) => {
+    router.push("/levelScreen");
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <View className="flex-1">
@@ -78,13 +85,15 @@ export default function HomeScreen() {
                 }}
                 className="justify-center items-center"
               >
-                <Text className="text-xl">
-                  {level.done ? (
-                    <Completed width={60} height={60}/>
-                  ) : (
-                    <Incomplete width={60} height={60}/>
-                  )}
-                </Text>
+                <TouchableOpacity onPress={() => level.done && handleLevelPress(level.level)}>
+                  <Text className="text-xl">
+                    {level.done ? (
+                      <Completed width={60} height={60}/>
+                    ) : (
+                      <Incomplete width={60} height={60}/>
+                    )}
+                  </Text>
+                </TouchableOpacity>
               </View>
             ))}
           </View>
