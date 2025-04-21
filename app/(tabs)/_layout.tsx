@@ -9,7 +9,6 @@ const routes = [
   { name: "/leaderboard", icon: <ChartSpline /> },
   { name: "/exercise", icon: <Dumbbell /> },
   { name: "/profile", icon: <User /> },
-  { name: "/camera", icon: <Camera /> },
 ] as const;
 
 export default function TabsLayout() {
