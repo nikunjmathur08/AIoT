@@ -11,6 +11,7 @@ import mediapipe as mp
 
 from utils import CvFpsCalc
 from model import KeyPointClassifier
+from model.point_history_classifier.point_history_classifier import PointHistoryClassifier
 
 
 def get_args():
@@ -90,6 +91,7 @@ def main():
 
     # Coordinate history #################################################################
     history_length = 16
+    point_history = deque(maxlen=history_length)
 
     # Finger gesture history ################################################
     finger_gesture_history = deque(maxlen=history_length)
