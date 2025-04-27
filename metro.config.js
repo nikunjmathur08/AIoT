@@ -9,6 +9,6 @@ config.transformer = {
 };
 config.resolver.assetExts = config.resolver.assetExts.filter(ext => ext !== "svg");
 config.resolver.sourceExts.push("svg");
-config.resolver.assetExts.push("tflite");
+config.resolver.assetExts.push("bin");
 
 module.exports = withNativeWind(config, { input: './app/globals.css' });

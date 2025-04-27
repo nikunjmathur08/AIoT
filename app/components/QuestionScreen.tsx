@@ -1,13 +1,49 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Pressable, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+
+// Import SVGs
+import A from '../../assets/alphabets/A.svg';
+import B from '../../assets/alphabets/B.svg';
+import C from '../../assets/alphabets/C.svg';
+import D from '../../assets/alphabets/D.svg';
+import E from '../../assets/alphabets/E.svg';
+import F from '../../assets/alphabets/F.svg';
+import G from '../../assets/alphabets/G.svg';
+import H from '../../assets/alphabets/H.svg';
+import I from '../../assets/alphabets/I.svg';
+import J from '../../assets/alphabets/J.svg';
+import K from '../../assets/alphabets/K.svg';
+import L from '../../assets/alphabets/L.svg';
+import M from '../../assets/alphabets/M.svg';
+import N from '../../assets/alphabets/N.svg';
+import O from '../../assets/alphabets/O.svg';
+import P from '../../assets/alphabets/P.svg';
+import Q from '../../assets/alphabets/Q.svg';
+import R from '../../assets/alphabets/R.svg';
+import S from '../../assets/alphabets/S.svg';
+import T from '../../assets/alphabets/T.svg';
+import U from '../../assets/alphabets/U.svg';
+import V from '../../assets/alphabets/V.svg';
+import W from '../../assets/alphabets/W.svg';
+import X from '../../assets/alphabets/X.svg';
+import Y from '../../assets/alphabets/Y.svg';
+import Z from '../../assets/alphabets/Z.svg';
+
+// Create a mapping object for easy access
+const svgMap: { [key: string]: React.FC<any> } = {
+  A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+};
+
+// Define specific route types that match Expo Router's expectations
+type AppRoutes = "/" | "/camera" | "/goal" | string;
 
 interface QuestionScreenProps {
   question: string;
   options: string[];
   correctAnswerIndex: number;
-  nextRoute: string;
+  nextRoute: AppRoutes;
 }
 
 export default function QuestionScreen({
@@ -23,6 +59,29 @@ export default function QuestionScreen({
   const handleAnswerSelect = (index: number) => {
     setSelectedAnswer(index);
     setShowFeedback(true);
+  };
+
+  const renderOption = (option: string) => {
+    // If it's a letter that corresponds to an SVG
+    if (option && svgMap[option]) {
+      const SvgComponent = svgMap[option];
+      return <SvgComponent width="60%" height="60%" />;
+    }
+    // If it's an image URL
+    else if (option && typeof option === 'string' && 
+             (option.startsWith('http') || option.endsWith('.svg'))) {
+      return (
+        <img 
+          src={option}
+          style={{ width: '60%', height: '60%' }}
+          alt={`Option ${option}`}
+        />
+      );
+    }
+    // Default: render as text
+    else {
+      return <Text className="text-4xl">{option}</Text>;
+    }
   };
 
   return (
@@ -44,17 +103,7 @@ export default function QuestionScreen({
               onPress={() => handleAnswerSelect(index)}
               disabled={showFeedback}
             >
-              {option.startsWith('http') || option.endsWith('.svg') ? (
-                <Image 
-                  source={typeof option === 'string' ? { uri: option } : option}
-                  style={{ width: '60%', height: '60%' }}
-                  resizeMode="contain"
-                />
-              ) : (
-                <Text className={`text-4xl ${selectedAnswer === index ? 'text-white' : 'text-black'}`}>
-                  {option}
-                </Text>
-              )}
+              {renderOption(option)}
             </TouchableOpacity>
           ))}
         </View>
