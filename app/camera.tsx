@@ -3,13 +3,12 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CameraView, useCameraPermissions, CameraType } from "expo-camera";
 import * as tf from "@tensorflow/tfjs";
-import { bundleResourceIO } from "@tensorflow/tfjs-react-native";
 import { decodeJpeg } from "@tensorflow/tfjs-react-native";
 import * as FileSystem from "expo-file-system";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import { useModel } from "./ModelContext";
 
-import * as handPoseDetection from "@tensorflow-models/hand-pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 
 export default function CameraScreen() {
@@ -19,54 +18,10 @@ export default function CameraScreen() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isCorrectSign, setIsCorrectSign] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [classifierModel, setClassifierModel] = useState<tf.LayersModel | null>(null);
-  const [handDetector, setHandDetector] = useState<handPoseDetection.HandDetector | null>(null);
   const cameraRef = useRef<CameraView>(null);
   const expectedSignId = 0; // Expected class index for "A"
 
-  // Load TensorFlow and models
-  useEffect(() => {
-    const loadModels = async () => {
-      try {
-        console.log("Waiting for TensorFlow.js ready...");
-        await tf.ready();
-        await tf.setBackend("rn-webgl");
-        console.log("TensorFlow.js ready!");
-
-        console.log("Loading models...");
-
-        // Parallel model loading
-        const modelJson = require("../assets/model/model.json");
-        const modelWeights = require("../assets/model/group1-shard1of1.bin");
-
-        const classifierPromise = tf.loadLayersModel(bundleResourceIO(modelJson, modelWeights));
-
-        const detectorConfig = {
-          runtime: "tfjs",
-          modelType: "full",
-          maxHands: 1,
-        };
-        const detectorPromise = handPoseDetection.createDetector(
-          handPoseDetection.SupportedModels.MediaPipeHands,
-          detectorConfig
-        );
-
-        const [classifier, detector] = await Promise.all([
-          classifierPromise,
-          detectorPromise,
-        ]);
-
-        setClassifierModel(classifier);
-        setHandDetector(detector);
-
-        console.log("All models loaded!");
-      } catch (error) {
-        console.error("Error loading models:", error);
-      }
-    };
-
-    loadModels();
-  }, []);
+  const { classifierModel, handDetector } = useModel();
 
   const preprocessKeypoints = (keypoints: { x: number, y: number }[]) => {
     const xCoords = keypoints.map((p) => p.x);
@@ -92,13 +47,18 @@ export default function CameraScreen() {
       return;
     }
 
+    const classNames = [
+      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+      "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+      "U", "V", "W", "X", "Y", "Z"
+    ];
+
+    const expectedSign = "A";
+
     setIsLoading(true);
     try {
       // Take a small photo
-      const photo = await cameraRef.current.takePictureAsync({
-        base64: false,
-        quality: 0.4, // << Compressed image
-      });
+      const photo = await cameraRef.current.takePictureAsync({ base64: false, quality: 0.4 });
 
       if (!photo) {
         console.error("Photo capture failed");
@@ -126,21 +86,26 @@ export default function CameraScreen() {
         const prediction = classifierModel.predict(inputTensor) as tf.Tensor;
         const predictionData = await prediction.data();
 
-        const maxIndex = predictionData.indexOf(
-          Math.max(...Array.from(predictionData))
-        );
+        const predictionArray = Array.from(predictionData);
+        const maxProbability = Math.max(...predictionArray);
+        const maxIndex = predictionData.indexOf(maxProbability);
 
-        console.log("Prediction result:", maxIndex);
+        const predictedSign = classNames[maxIndex];
 
-        setIsCorrectSign(maxIndex === expectedSignId);
+        console.log(`Prediction result: ${predictedSign} with confidence ${maxProbability}`);
 
-        tf.dispose([imgTensor, inputTensor, prediction]);
+        if (predictedSign === expectedSign && maxProbability > 0.8) {
+          setIsCorrectSign(true);
+          tf.dispose([imgTensor, inputTensor, prediction]);
 
-        if (maxIndex === expectedSignId) {
           setTimeout(() => {
             router.back();
           }, 2000);
+        } else {
+          setIsCorrectSign(false);
+          tf.dispose([imgTensor, inputTensor, prediction]);
         }
+        
       } else {
         console.log("No hand detected or incomplete landmarks");
         setIsCorrectSign(false);
