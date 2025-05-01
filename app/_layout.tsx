@@ -12,7 +12,6 @@ export default function RootLayout() {
     null
   );
 
-  // ✅ Always call hooks at the top level
   useEffect(() => {
     const prepareTfjs = async () => {
       try {

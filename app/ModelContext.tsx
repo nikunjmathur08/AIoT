@@ -31,8 +31,8 @@ export const ModelProvider = ({ children }: { children: React.ReactNode }) => {
 
         // Load hand detector
         const detectorConfig = {
-          runtime: 'tfjs',
-          modelType: 'full',
+          runtime: 'tfjs' as const,
+          modelType: 'full' as const,
           maxHands: 1,
         };
         const loadedHandDetector = await handPoseDetection.createDetector(
