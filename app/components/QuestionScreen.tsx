@@ -128,7 +128,7 @@ export default function QuestionScreen({
             <TouchableOpacity
               key={index}
               className={`w-[48%] aspect-square ${
-                selectedAnswer === index ? "bg-secondary" : "bg-white"
+                selectedAnswer === index ? "border-2 border-secondary rounded-full bg-white" : "bg-white"
               } rounded-xl mb-4 items-center justify-center`}
               onPress={() => handleAnswerSelect(index)}
               disabled={showFeedback}

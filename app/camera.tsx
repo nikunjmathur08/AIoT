@@ -169,9 +169,9 @@ export default function CameraScreen() {
           {isCameraActive ? (
             <CameraView
               ref={cameraRef}
-              className="h-[400px] w-full"
               facing={cameraType}
               enableTorch={false}
+              style={{height:400, width: '100%'}}
             />
           ) : (
             <View className="h-[400px] w-full bg-[#222]" />
