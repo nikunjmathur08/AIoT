@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import csv
 import copy
 import argparse
@@ -11,7 +13,7 @@ import mediapipe as mp
 
 from utils import CvFpsCalc
 from model import KeyPointClassifier
-from model.point_history_classifier.point_history_classifier import PointHistoryClassifier
+from model import PointHistoryClassifier
 
 
 def get_args():
@@ -51,14 +53,17 @@ def main():
     use_brect = True
 
     # Camera preparation ###############################################################
+    print("Initializing camera...")
     cap = cv.VideoCapture(cap_device)
     if not cap.isOpened():
         print("Error: Could not open camera.")
         exit()
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
+    print("Camera initialized.")
 
     # Model load #############################################################
+    print("Loading Mediapipe Hands...")
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
@@ -66,25 +71,24 @@ def main():
         min_detection_confidence=min_detection_confidence,
         min_tracking_confidence=min_tracking_confidence,
     )
+    print("Mediapipe Hands loaded.")
 
     keypoint_classifier = KeyPointClassifier()
 
     point_history_classifier = PointHistoryClassifier()
 
     # Read labels ###########################################################
-    with open('model/keypoint_classifier/keypoint_classifier_label.csv',
-              encoding='utf-8-sig') as f:
-        keypoint_classifier_labels = csv.reader(f)
-        keypoint_classifier_labels = [
-            row[0] for row in keypoint_classifier_labels
-        ]
-    with open(
-            'model/point_history_classifier/point_history_classifier_label.csv',
-            encoding='utf-8-sig') as f:
-        point_history_classifier_labels = csv.reader(f)
-        point_history_classifier_labels = [
-            row[0] for row in point_history_classifier_labels
-        ]
+    try:
+        with open('model/keypoint_classifier/keypoint_classifier_label.csv', encoding='utf-8-sig') as f:
+            keypoint_classifier_labels = csv.reader(f)
+            keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels]
+        with open('model/point_history_classifier/point_history_classifier_label.csv', encoding='utf-8-sig') as f:
+            point_history_classifier_labels = csv.reader(f)
+            point_history_classifier_labels = [row[0] for row in point_history_classifier_labels]
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        exit()
+    print("Labels loaded successfully.")
 
     # FPS Measurement ########################################################
     cvFpsCalc = CvFpsCalc(buffer_len=10)
@@ -107,7 +111,6 @@ def main():
         if key == 27:  # ESC
             break
         number, mode = select_mode(key, mode)
-        
 
         # Camera capture #####################################################
         ret, image = cap.read()
@@ -143,7 +146,7 @@ def main():
 
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-                if hand_sign_id == "Not applicable":  # Point gesture
+                if hand_sign_id == 2:  # Point gesture
                     point_history.append(landmark_list[8])
                 else:
                     point_history.append([0, 0])
@@ -187,13 +190,11 @@ def select_mode(key, mode):
     number = -1
     if 48 <= key <= 57:  # 0 ~ 9
         number = key - 48
-    elif 97 <= key <= 118:
-        number = key - 87 
-    if key == 119:  # w
+    if key == 110:  # n
         mode = 0
-    if key == 120:  # x
+    if key == 107:  # k
         mode = 1
-    if key == 121:  # y
+    if key == 104:  # h
         mode = 2
     return number, mode
 
@@ -285,11 +286,16 @@ def pre_process_point_history(image, point_history):
 def logging_csv(number, mode, landmark_list, point_history_list):
     if mode == 0:
         pass
-    if mode == 1 and (0 <= number <= 31):
-        csv_path = 'model\keypoint_classifier\Alphabet_keys.csv'
+    if mode == 1 and (0 <= number <= 9):
+        csv_path = 'model/keypoint_classifier/keypoint.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
+    if mode == 2 and (0 <= number <= 9):
+        csv_path = 'model/point_history_classifier/point_history.csv'
+        with open(csv_path, 'a', newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([number, *point_history_list])
     return
 
 
@@ -526,12 +532,12 @@ def draw_info(image, fps, mode, number):
     cv.putText(image, "FPS:" + str(fps), (10, 30), cv.FONT_HERSHEY_SIMPLEX,
                1.0, (255, 255, 255), 2, cv.LINE_AA)
 
-    mode_string = ['Logging Key Point']
+    mode_string = ['Logging Key Point', 'Logging Point History']
     if 1 <= mode <= 2:
         cv.putText(image, "MODE:" + mode_string[mode - 1], (10, 90),
                    cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
                    cv.LINE_AA)
-        if 0 <= number <= 31:
+        if 0 <= number <= 9:
             cv.putText(image, "NUM:" + str(number), (10, 110),
                        cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
                        cv.LINE_AA)
