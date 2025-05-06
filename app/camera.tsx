@@ -1,15 +1,22 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CameraView, useCameraPermissions, CameraType } from "expo-camera";
 import { decodeJpeg } from "@tensorflow/tfjs-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useModel } from "./ModelContext";
-import { calcBoundingRect, calcLandmarkList, HandSkeleton, BoundingBox } from "./components/HandUtils";
+import {
+  calcBoundingRect,
+  calcLandmarkList,
+  HandSkeleton,
+  BoundingBox,
+} from "./components/HandUtils";
 import * as tf from "@tensorflow/tfjs";
 import * as FileSystem from "expo-file-system";
 import "@tensorflow/tfjs-backend-webgl";
+import ViewShot from "react-native-view-shot";
+import * as MediaLibrary from "expo-media-library";
 
 // Define types for hand landmarks
 type Keypoint = {
@@ -31,8 +38,11 @@ export default function CameraScreen() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isCorrectSign, setIsCorrectSign] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentLandmarks, setCurrentLandmarks] = useState<Keypoint[] | null>(null);
+  const [currentLandmarks, setCurrentLandmarks] = useState<Keypoint[] | null>(
+    null
+  );
   const cameraRef = useRef<CameraView>(null);
+  const viewShotRef = useRef<ViewShot | null>(null);
   const expectedSignId = 0; // Expected class index for "A"
 
   const { classifierModel, handDetector } = useModel();
@@ -45,10 +55,39 @@ export default function CameraScreen() {
 
     return (
       <View className="absolute left-0 top-0 w-full h-[400px]">
-        <HandSkeleton landmarks={landmarkList} imageWidth={screenWidth} imageHeight={400} />
+        <HandSkeleton
+          landmarks={landmarkList}
+          imageWidth={screenWidth}
+          imageHeight={400}
+        />
         <BoundingBox rect={boundingRect} />
       </View>
     );
+  };
+
+  const saveHandImage = async () => {
+    try {
+      console.log("Saving image...");
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert("Permission required", "Enable photos access in Settings.");
+        return;
+      }
+      
+      if (!viewShotRef.current?.capture) {
+        throw new Error("ViewShot not ready :<");
+      }
+
+      const uri = await viewShotRef.current?.capture?.();
+      console.log("Captured uri:", uri);
+      if (!uri) throw new Error("Capture failed");
+
+      await MediaLibrary.saveToLibraryAsync(uri);
+      Alert.alert("Success", "Image saved to photos");
+    } catch (error) {
+      console.error("Save failed:", error);
+      Alert.alert("Error", "Failed to save image");
+    }
   };
 
   const preprocessKeypoints = (keypoints: Keypoint[]): number[] => {
@@ -72,9 +111,32 @@ export default function CameraScreen() {
     }
 
     const classNames = [
-      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
-      "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-      "U", "V", "W", "X", "Y", "Z"
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z",
     ];
 
     const expectedSign = "A";
@@ -83,7 +145,10 @@ export default function CameraScreen() {
     let imgTensor, inputTensor, prediction;
 
     try {
-      const photo = await cameraRef.current.takePictureAsync({ base64: false, quality: 0.4 });
+      const photo = await cameraRef.current.takePictureAsync({
+        base64: false,
+        quality: 0.4,
+      });
 
       if (!photo) throw new Error("Photo capture failed");
 
@@ -113,13 +178,15 @@ export default function CameraScreen() {
         const maxIndex = predictionData.indexOf(maxProbability);
         const predictedSign = classNames[maxIndex];
 
-        console.log(`Prediction result: ${predictedSign} with confidence ${maxProbability}`);
+        console.log(
+          `Prediction result: ${predictedSign} with confidence ${maxProbability}`
+        );
 
         if (predictedSign === expectedSign && maxProbability > 0.7) {
           setIsCorrectSign(true);
-          setTimeout(() => {
-            router.back();
-          }, 2000);
+          // setTimeout(() => {
+          //   router.back();
+          // }, 2000);
         } else {
           setIsCorrectSign(false);
         }
@@ -150,8 +217,13 @@ export default function CameraScreen() {
   if (!permission?.granted) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-white text-lg mb-4">Camera access is required</Text>
-        <TouchableOpacity onPress={requestPermission} className="bg-white px-6 py-3 rounded-full">
+        <Text className="text-white text-lg mb-4">
+          Camera access is required
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          className="bg-white px-6 py-3 rounded-full"
+        >
           <Text className="text-black font-semibold">Allow Camera</Text>
         </TouchableOpacity>
       </View>
@@ -171,20 +243,36 @@ export default function CameraScreen() {
               ref={cameraRef}
               facing={cameraType}
               enableTorch={false}
-              style={{height:400, width: '100%'}}
+              style={{ height: 400, width: "100%" }}
             />
           ) : (
             <View className="h-[400px] w-full bg-[#222]" />
           )}
 
-          {/* Hand skeleton overlay */}
-          {currentLandmarks && <HandView landmarks={currentLandmarks} />}
+          <ViewShot
+            ref={viewShotRef}
+            options={{ format: "jpg", quality: 0.9 }}
+            style={{
+              width: screenWidth,
+              height: screenHeight,
+              position: 'absolute',
+              backgroundColor: 'transparent'
+            }}
+          >
+            {currentLandmarks && <HandView landmarks={currentLandmarks} />}
+          </ViewShot>
         </View>
 
         {isCorrectSign !== null && (
           <View className="items-center mt-4">
-            <Text className={`text-xl ${isCorrectSign ? "text-green-600" : "text-red-600"}`}>
-              {isCorrectSign ? "Perfect! Moving to next level..." : "Try again!"}
+            <Text
+              className={`text-xl ${
+                isCorrectSign ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {isCorrectSign
+                ? "Perfect! Moving to next level..."
+                : "Try again!"}
             </Text>
           </View>
         )}
@@ -196,7 +284,19 @@ export default function CameraScreen() {
         )}
 
         <View className="flex-row justify-center space-x-4 mt-8">
-          <TouchableOpacity className="bg-white px-6 py-3 rounded-full" onPress={toggleCameraType}>
+          <TouchableOpacity
+            className="bg-blue-500 px-6 py-3 rounded-full"
+            onPress={saveHandImage}
+            disabled={!currentLandmarks || isLoading}
+          >
+            <Text className="text-white font-semibold">
+              {currentLandmarks? "Save Hand Preview" : "Detect Hand First"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-white px-6 py-3 rounded-full"
+            onPress={toggleCameraType}
+          >
             <Text className="text-black font-semibold">Flip Camera</Text>
           </TouchableOpacity>
 
@@ -206,7 +306,9 @@ export default function CameraScreen() {
             disabled={!classifierModel || !handDetector}
           >
             <Text className="text-white font-semibold">
-              {classifierModel && handDetector ? "Check Sign" : "Loading models..."}
+              {classifierModel && handDetector
+                ? "Check Sign"
+                : "Loading models..."}
             </Text>
           </TouchableOpacity>
         </View>

@@ -61,7 +61,9 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "react-native-view-shot": "4.0.3",
+    "expo-media-library": "~17.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
