@@ -11,7 +11,7 @@ import {
   calcLandmarkList,
   HandSkeleton,
   BoundingBox,
-} from "./components/HandUtils";
+  preProcessLandmark } from "./components/HandUtils";
 import * as tf from "@tensorflow/tfjs";
 import * as FileSystem from "expo-file-system";
 import "@tensorflow/tfjs-backend-webgl";
@@ -107,42 +107,21 @@ export default function CameraScreen() {
     if (!cameraRef.current || !classifierModel || !handDetector) {
       console.log("Missing camera ref or models not loaded");
       setIsCorrectSign(false);
+      setCurrentLandmarks(null); // Clear previous landmarks if models not ready
       return;
     }
 
+    setCurrentLandmarks(null); // Always clear previous landmarks before prediction
+    setIsCorrectSign(null); // Reset sign correctness state
+
     const classNames = [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I",
-      "J",
-      "K",
-      "L",
-      "M",
-      "N",
-      "O",
-      "P",
-      "Q",
-      "R",
-      "S",
-      "T",
-      "U",
-      "V",
-      "W",
-      "X",
-      "Y",
-      "Z",
+      "Q", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "A", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     ];
 
     const expectedSign = "A";
     setIsLoading(true);
 
-    let imgTensor, inputTensor, prediction;
+    let imgTensor = null, inputTensor = null, prediction = null;
 
     try {
       const photo = await cameraRef.current.takePictureAsync({
@@ -165,9 +144,10 @@ export default function CameraScreen() {
 
       if (hands.length > 0 && hands[0].keypoints?.length === 21) {
         const keypoints = hands[0].keypoints as Keypoint[];
-        setCurrentLandmarks(keypoints); // ✅ Store to render later
+        setCurrentLandmarks(keypoints);
 
-        const normalizedKeypoints = preprocessKeypoints(keypoints);
+        const landmarkList = keypoints.map((p) => [p.x, p.y]);
+        const normalizedKeypoints = preProcessLandmark(landmarkList);
         inputTensor = tf.tensor2d([normalizedKeypoints]);
 
         prediction = classifierModel.predict(inputTensor) as tf.Tensor;
@@ -182,23 +162,27 @@ export default function CameraScreen() {
           `Prediction result: ${predictedSign} with confidence ${maxProbability}`
         );
 
-        if (predictedSign === expectedSign && maxProbability > 0.7) {
+        if (predictedSign === expectedSign && maxProbability > 0.85) {
           setIsCorrectSign(true);
-          // setTimeout(() => {
-          //   router.back();
-          // }, 2000);
+        } else if (maxProbability < 0.6) {
+          setIsCorrectSign(false);
+          Alert.alert("Uncertain", "Could not confidently recognize the sign. Try again!");
         } else {
           setIsCorrectSign(false);
         }
       } else {
         console.log("No hand detected or incomplete landmarks");
+        setCurrentLandmarks(null); // Clear overlay if no hand detected
         setIsCorrectSign(false);
       }
     } catch (error) {
       console.error("Error during validation:", error);
+      setCurrentLandmarks(null); // Clear overlay on error
       setIsCorrectSign(false);
     } finally {
-      tf.dispose([imgTensor, inputTensor, prediction]);
+      if (imgTensor) tf.dispose(imgTensor);
+      if (inputTensor) tf.dispose(inputTensor);
+      if (prediction) tf.dispose(prediction);
       setIsLoading(false);
     }
   };

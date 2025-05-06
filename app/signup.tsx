@@ -62,7 +62,7 @@ export default function SignupScreen() {
 
         {/* Login Prompt */}
         <Text className="text-sm text-black mt-2">
-          Already using Signie? <Text className="font-bold">Log in</Text>
+          Already using Signie? <Text className="font-bold text-secondary">Log in</Text>
         </Text>
       </View>
     </SafeAreaView>
