@@ -11,7 +11,7 @@ export default function Preference() {
   const [selectedLanguage, setSelectedLanguage] = useState("ASL");
   const [menuVisible, setMenuVisible] = useState(false);
   const router = useRouter();
-  const nativeLanguages = ["English", "Hindi", "Tamil"];
+  const nativeLanguages = ["English"];
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
@@ -41,10 +41,10 @@ export default function Preference() {
                 <UK width={20} height={20}/>
                 <Text className="text-xl ml-2">{language}</Text>
               </View>
-              <Image
+              {/* <Image
                 source={require("../assets/down.png")}
                 className="w-6 h-6"
-              />
+              /> */}
             </TouchableOpacity>
           }
         >

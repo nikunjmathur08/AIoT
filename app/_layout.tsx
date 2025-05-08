@@ -48,7 +48,9 @@ export default function RootLayout() {
             <Stack.Screen name="preference" />
             <Stack.Screen name="camera" />
             <Stack.Screen name="splash" />
+            <Stack.Screen name="splash3" />
             <Stack.Screen name="level" />
+            <Stack.Screen name="DayStreak" />
             <Stack.Screen name="levelScreen" />
           </Stack>
         </ModelProvider>

@@ -48,6 +48,15 @@ export default function CameraScreen() {
   const { classifierModel, handDetector } = useModel();
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
+  useEffect(() => {
+    if (isCorrectSign) {
+      const timer = setTimeout(() => {
+        router.push('/Congratulations');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isCorrectSign, router]);
+
   const HandView: React.FC<HandViewProps> = ({ landmarks }) => {
     if (!landmarks) return null;
     const landmarkList = calcLandmarkList(landmarks, screenWidth, 400); // camera preview height is 400
@@ -162,7 +171,7 @@ export default function CameraScreen() {
           `Prediction result: ${predictedSign} with confidence ${maxProbability}`
         );
 
-        if (predictedSign === expectedSign && maxProbability > 0.85) {
+        if (predictedSign === expectedSign && maxProbability > 0.8) {
           setIsCorrectSign(true);
         } else if (maxProbability < 0.6) {
           setIsCorrectSign(false);
@@ -268,7 +277,7 @@ export default function CameraScreen() {
         )}
 
         <View className="flex-row justify-center space-x-4 mt-8">
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className="bg-blue-500 px-6 py-3 rounded-full"
             onPress={saveHandImage}
             disabled={!currentLandmarks || isLoading}
@@ -276,7 +285,7 @@ export default function CameraScreen() {
             <Text className="text-white font-semibold">
               {currentLandmarks? "Save Hand Preview" : "Detect Hand First"}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             className="bg-white px-6 py-3 rounded-full"
             onPress={toggleCameraType}

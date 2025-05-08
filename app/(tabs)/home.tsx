@@ -28,7 +28,7 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const handleLevelPress = (level: number) => {
-    router.push("/levelScreen");
+    router.push("/splash3");
   };
 
   return (

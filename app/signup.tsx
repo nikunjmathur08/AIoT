@@ -20,7 +20,7 @@ export default function SignupScreen() {
           Become a part of global{"\n"}sign language community!
         </Text>
 
-        <TouchableOpacity className="flex-row items-center justify-center bg-white w-full py-4 rounded-2xl mt-16 mb-4">
+        {/* <TouchableOpacity className="flex-row items-center justify-center bg-white w-full py-4 rounded-2xl mt-16 mb-4">
           <Image
             source={require("../assets/Google.png")}
             className="w-7 h-7 mr-4 -ml-4"
@@ -29,10 +29,10 @@ export default function SignupScreen() {
           <Text className="text-black text-base font-medium">
             Continue with Google
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Facebook Button */}
-        <TouchableOpacity className="flex-row items-center justify-center bg-white w-full py-4 rounded-2xl mb-6">
+        {/* <TouchableOpacity className="flex-row items-center justify-center bg-white w-full py-4 rounded-2xl mb-6">
           <Image
             source={require("../assets/Facebook.png")}
             className="w-7 h-7 mr-4"
@@ -41,18 +41,18 @@ export default function SignupScreen() {
           <Text className="text-black text-base font-medium">
             Continue with Facebook
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Divider */}
-        <View className="flex-row items-center w-full mb-6">
+        {/* <View className="flex-row items-center w-full mb-6">
           <View className="flex-1 h-px bg-black/30" />
           <Text className="mx-4 text-black font-semibold">or</Text>
           <View className="flex-1 h-px bg-black/30" />
-        </View>
+        </View> */}
 
         {/* Email Signup */}
         <TouchableOpacity
-          className="bg-buttonBgSec w-full py-4 rounded-2xl mb-4"
+          className="bg-buttonBgSec w-full py-4 rounded-2xl mb-4 mt-80"
           onPress={() => router.push("/preference")}
         >
           <Text className="text-xl text-center text-black font-semibold">
